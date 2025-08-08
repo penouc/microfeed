@@ -49,12 +49,14 @@ export async function onFetchItemRequestGet({ params, env, request }, checkIsAll
 // Fetch presigned url from R2
 //
 
-async function getPresignedUrlFromR2(env, bucket, inputParams) {
+async function getPresignedUrlFromR2(env, inputParams) {
   const { key } = inputParams;
+  
+  // Use S3 API approach for presigned URLs (works with both API and binding)
   const accessKeyId = `${env.R2_ACCESS_KEY_ID}`;
   const secretAccessKey = `${env.R2_SECRET_ACCESS_KEY}`;
   const endpoint = `https://${env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`;
-  const region = "auto"; // Use appropriate region
+  const region = "auto";
 
   const s3Client = new S3Client({
     region,
@@ -66,7 +68,7 @@ async function getPresignedUrlFromR2(env, bucket, inputParams) {
   });
 
   const command = new PutObjectCommand({
-    Bucket: bucket,
+    Bucket: env.R2_PUBLIC_BUCKET || 'titi-li', // fallback to our known bucket
     Key: `${projectPrefix(env)}/${key}`,
   });
 
@@ -94,7 +96,7 @@ async function getPresignedUrlFromR2(env, bucket, inputParams) {
  * }
  */
 export async function onGetR2PresignedUrlRequestPost({ inputParams, env }) {
-  const presignedUrl = await getPresignedUrlFromR2(env, env.R2_PUBLIC_BUCKET, inputParams);
+  const presignedUrl = await getPresignedUrlFromR2(env, inputParams);
   return {
     presignedUrl,
     mediaBaseUrl: projectPrefix(env),

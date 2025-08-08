@@ -8,15 +8,26 @@ binding = "ASSETS"
 
 [[d1_databases]]
 binding = "FEED_DB"
-database_name = "FEED_DB"
-database_id = "id_placeholder"
+database_name = "titi-li_feed_db_production"
+database_id = "720920d5-c104-41fe-93b5-ded1ceda5cb1"
+
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "titi-li"
+
+[vars]
+R2_PUBLIC_BUCKET = "titi-li"
+CLOUDFLARE_ACCOUNT_ID = "c04d84463a0c79b86405c4df139c8cb9"
+CLOUDFLARE_PROJECT_NAME = "microfeed"
+DEPLOYMENT_ENVIRONMENT = "production"
 
 [env.development]
 [[env.development.d1_databases]]
 binding = "FEED_DB"
-database_name = "FEED_DB"
+database_name = "titi-li_feed_db_production"
 database_id = "id_placeholder"
 
 [env.production]
 
 [env.preview]
+
