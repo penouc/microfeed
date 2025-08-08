@@ -1,6 +1,18 @@
+name = "microfeed"
+main = "./_worker.js"
 compatibility_date = "2025-03-14"
 
-[[ env.development.d1_databases ]]
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "FEED_DB"
+database_name = "FEED_DB"
+database_id = "id_placeholder"
+
+[env.development]
+[[env.development.d1_databases]]
 binding = "FEED_DB"
 database_name = "FEED_DB"
 database_id = "id_placeholder"
