@@ -205,6 +205,26 @@ a {
 }
 
 /*
+  Heroicons SVG styling - fix black bubble icons
+ */
+svg {
+  @apply inline-block;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+svg:not(:root) {
+  overflow: visible;
+}
+
+/* Ensure heroicons render properly */
+.heroicon {
+  @apply inline-block;
+  fill: currentColor;
+  stroke: none;
+}
+
+/*
   Make Quill styling happy
  */
 .quill .ql-container {

@@ -33,3 +33,18 @@ CREATE TABLE IF NOT EXISTS settings (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS comments (
+  id VARCHAR(11) PRIMARY KEY,
+  item_id VARCHAR(11) NOT NULL,
+  author_email VARCHAR(255),
+  content TEXT NOT NULL,
+  status TINYINT DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (item_id) REFERENCES items(id)
+);
+
+CREATE INDEX IF NOT EXISTS comments_item_id on comments (item_id);
+CREATE INDEX IF NOT EXISTS comments_status on comments (status);
+CREATE INDEX IF NOT EXISTS comments_created_at on comments (created_at);

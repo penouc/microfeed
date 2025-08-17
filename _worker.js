@@ -171,9 +171,19 @@ export default {
         // Apply API middleware first
         try {
           const apiMiddleware = await import('./functions/api/_middleware.js');
+          let middlewareResult = null;
           for (const middleware of apiMiddleware.onRequest) {
-            const next = () => Promise.resolve();
-            await middleware({ request, next, env, data });
+            const next = () => {
+              middlewareResult = 'continue';
+              return Promise.resolve();
+            };
+            const result = await middleware({ request, next, env, data });
+            if (result instanceof Response) {
+              return result;
+            }
+            if (middlewareResult !== 'continue') {
+              return new Response('Unauthorized', { status: 401 });
+            }
           }
         } catch (error) {
           if (error instanceof Response) {
@@ -235,6 +245,26 @@ export default {
             const handler = await import('./functions/api/media_files/presigned_urls/index.jsx');
             if (method === 'post' && handler.onRequestPost) {
               return await handler.onRequestPost({ env, request, data });
+            }
+          }
+        }
+
+        // API comments
+        if (pathname.startsWith('/api/comments')) {
+          if (tryRoute('/api/comments')) {
+            const handler = await import('./functions/api/comments/index.jsx');
+            if (method === 'post' && handler.onRequestPost) {
+              return await handler.onRequestPost({ env, request, data });
+            }
+          }
+
+          // Handle dynamic item IDs: /api/comments/{itemId}
+          const itemIdMatch = normalizedPath.match(/^\/api\/comments\/([^\/]+)$/);
+          if (itemIdMatch) {
+            const itemId = itemIdMatch[1];
+            const handler = await import('./functions/api/comments/[itemId]/index.jsx');
+            if (method === 'get' && handler.onRequestGet) {
+              return await handler.onRequestGet({ params: { itemId }, env, request, data });
             }
           }
         }

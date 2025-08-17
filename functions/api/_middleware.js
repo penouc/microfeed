@@ -15,6 +15,12 @@ async function fetchFeedAndAuth({request, next, env, data}) {
   data.feedContent = contentFromDb;
   data.feedCrud = new FeedCrudManager(contentFromDb, feedDb, request);
 
+  // Skip auth for comments API
+  const url = new URL(request.url);
+  if (url.pathname.startsWith('/api/comments')) {
+    return next();
+  }
+
   if (contentFromDb.settings) {
     const apiSettings = contentFromDb.settings[SETTINGS_CATEGORIES.API_SETTINGS];
     if (apiSettings) {

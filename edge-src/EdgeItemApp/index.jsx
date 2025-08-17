@@ -11,7 +11,7 @@ export default class EdgeItemApp extends React.Component {
       <HtmlHeader
         title={item.title}
         description={htmlMetaDescription(item.content_text, false)}
-        webpackJsList={[]}
+        webpackJsList={['comments_js']}
         webpackCssList={[]}
         canonicalUrl={canonicalUrl}
         favicon={{
