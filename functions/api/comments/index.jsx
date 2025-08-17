@@ -15,7 +15,7 @@ export async function onRequestPost({env, request}) {
     }
 
     const feedDb = new FeedDb(env, request);
-    
+
     // Validate that the item exists
     const itemsResult = await feedDb.FEED_DB.prepare(
       "SELECT id FROM items WHERE id = ? AND status IN (1, 2)"
@@ -94,7 +94,7 @@ Time: ${new Date().toISOString()}
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'noreply@yourdomain.com',
+      from: 'help@baballm.com',
       to: [env.NOTIFICATION_EMAIL],
       subject: 'New comment on your microfeed',
       text: emailContent,
