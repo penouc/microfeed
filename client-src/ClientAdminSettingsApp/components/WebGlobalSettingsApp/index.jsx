@@ -25,11 +25,18 @@ export default class WebGlobalSettingsApp extends React.Component {
     let publicBucketUrl = '';
     let itemsPerPage = DEFAULT_ITEMS_PER_PAGE;
     let itemsSortOrder = ITEMS_SORT_ORDERS.NEWEST_FIRST;
+    let googleAnalyticsId = '';
+    let seoSettings = {
+      twitterHandle: '',
+      ogDefaultImage: '',
+    };
     if (feed.settings && feed.settings[currentType]) {
       favicon = feed.settings[currentType].favicon || {};
       publicBucketUrl = feed.settings[currentType].publicBucketUrl || '';
       itemsSortOrder = feed.settings[currentType].itemsSortOrder || ITEMS_SORT_ORDERS.NEWEST_FIRST;
       itemsPerPage = feed.settings[currentType].itemsPerPage || DEFAULT_ITEMS_PER_PAGE;
+      googleAnalyticsId = feed.settings[currentType].googleAnalyticsId || '';
+      seoSettings = feed.settings[currentType].seoSettings || seoSettings;
     }
     this.state = {
       feed,
@@ -39,11 +46,13 @@ export default class WebGlobalSettingsApp extends React.Component {
       publicBucketUrl,
       itemsPerPage,
       itemsSortOrder,
+      googleAnalyticsId,
+      seoSettings,
     };
   }
 
   render() {
-    const {feed, currentType, favicon, publicBucketUrl, itemsPerPage, itemsSortOrder} = this.state;
+    const {feed, currentType, favicon, publicBucketUrl, itemsPerPage, itemsSortOrder, googleAnalyticsId, seoSettings} = this.state;
     const {submitting, submitForType, setChanged} = this.props;
     return (<SettingsBase
       title="Web global settings"
@@ -64,10 +73,53 @@ export default class WebGlobalSettingsApp extends React.Component {
           publicBucketUrl,
           itemsSortOrder,
           itemsPerPage,
+          googleAnalyticsId,
+          seoSettings,
         });
       }}
     >
       <div className="grid grid-cols-1 gap-4">
+        <details open>
+          <summary className="lh-page-subtitle cursor-pointer">Google Analytics</summary>
+          <AdminInput
+            label="Google Analytics ID (GA4)"
+            placeholder="G-XXXXXXXXXX"
+            customClass="text-xs"
+            value={googleAnalyticsId}
+            onChange={(e) => this.setState({googleAnalyticsId: e.target.value}, () => setChanged())}
+          />
+          <div className="text-xs text-helper-color mt-2">
+            Enter your Google Analytics 4 tracking ID to enable analytics tracking across your site.
+          </div>
+        </details>
+        
+        <details>
+          <summary className="lh-page-subtitle cursor-pointer">SEO Settings</summary>
+          <div className="grid grid-cols-1 gap-4">
+            <AdminInput
+              label="Twitter Handle"
+              placeholder="@yourhandle"
+              customClass="text-xs"
+              value={seoSettings.twitterHandle}
+              onChange={(e) => this.setState({
+                seoSettings: {...seoSettings, twitterHandle: e.target.value}
+              }, () => setChanged())}
+            />
+            <AdminInput
+              label="Default Open Graph Image URL"
+              placeholder="https://your-domain.com/og-image.png"
+              customClass="text-xs"
+              value={seoSettings.ogDefaultImage}
+              onChange={(e) => this.setState({
+                seoSettings: {...seoSettings, ogDefaultImage: e.target.value}
+              }, () => setChanged())}
+            />
+          </div>
+          <div className="text-xs text-helper-color mt-2">
+            These settings will be used as defaults when sharing your content on social media.
+          </div>
+        </details>
+        
         <details open>
           <summary className="lh-page-subtitle cursor-pointer">R2 public bucket url</summary>
           <AdminInput

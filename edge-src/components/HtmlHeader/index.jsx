@@ -19,6 +19,9 @@ export default class HtmlHeader extends React.Component {
       webpackCssList,
       favicon,
       canonicalUrl,
+      googleAnalyticsId,
+      openGraph,
+      twitterCard,
     } = this.props;
     return (
       <head>
@@ -27,6 +30,44 @@ export default class HtmlHeader extends React.Component {
         {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         {description && <meta name="description" content={description}/>}
+        
+        {/* Open Graph tags */}
+        {openGraph && openGraph.title && <meta property="og:title" content={openGraph.title} />}
+        {openGraph && openGraph.description && <meta property="og:description" content={openGraph.description} />}
+        {openGraph && openGraph.type && <meta property="og:type" content={openGraph.type} />}
+        {openGraph && openGraph.url && <meta property="og:url" content={openGraph.url} />}
+        {openGraph && openGraph.image && <meta property="og:image" content={openGraph.image} />}
+        {openGraph && openGraph.siteName && <meta property="og:site_name" content={openGraph.siteName} />}
+        
+        {/* Twitter Card tags */}
+        {twitterCard && <meta name="twitter:card" content={twitterCard.card || "summary"} />}
+        {twitterCard && twitterCard.site && <meta name="twitter:site" content={twitterCard.site} />}
+        {twitterCard && twitterCard.creator && <meta name="twitter:creator" content={twitterCard.creator} />}
+        {twitterCard && twitterCard.title && <meta name="twitter:title" content={twitterCard.title} />}
+        {twitterCard && twitterCard.description && <meta name="twitter:description" content={twitterCard.description} />}
+        {twitterCard && twitterCard.image && <meta name="twitter:image" content={twitterCard.image} />}
+        
+        {/* Performance optimizations */}
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="//www.googletagmanager.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        
+        {/* Google Analytics */}
+        {googleAnalyticsId && (
+          <>
+            <link rel="preconnect" href="https://www.googletagmanager.com" />
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}></script>
+            <script dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${googleAnalyticsId}');
+              `
+            }}></script>
+          </>
+        )}
         {webpackJsList && webpackJsList.length > 0 && webpackJsList.map((js) => {
           const realUrl = this.getWebpackRealUrl(js);
           return (realUrl ? <script key={js} type="text/javascript" src={realUrl} defer/> : '');
