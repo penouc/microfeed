@@ -1,5 +1,9 @@
-import {initGoogleAnalytics} from './AnalyticsUtils';
 import {initWebVitals, optimizeImageLoading} from './WebVitalsUtils';
+
+// Global gtag function declaration
+function gtag() {
+  window.dataLayer.push(arguments);
+}
 
 export function initializeApp() {
   // Initialize Google Analytics if GA ID is available in the HTML
@@ -10,7 +14,6 @@ export function initializeApp() {
     if (gaId && !window.gtag) {
       // Initialize gtag function only - script is already loaded from server
       window.dataLayer = window.dataLayer || [];
-      function gtag(){window.dataLayer.push(arguments);}
       window.gtag = gtag;
       gtag('js', new Date());
       gtag('config', gaId);
@@ -30,7 +33,6 @@ export function initializeApp() {
       
       // Initialize gtag
       window.dataLayer = window.dataLayer || [];
-      function gtag(){window.dataLayer.push(arguments);}
       window.gtag = gtag;
       gtag('js', new Date());
       gtag('config', defaultGaId);

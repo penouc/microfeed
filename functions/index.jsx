@@ -11,7 +11,7 @@ export async function onRequestGet({env, request}) {
   });
   return webResponseBuilder.getResponse({
     getComponent: (content, jsonData, theme) => {
-      return <EdgeHomeApp jsonData={jsonData} theme={theme}/>;
+      return <EdgeHomeApp jsonData={jsonData} theme={theme} feed={content}/>;
     },
   });
 }

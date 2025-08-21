@@ -1,7 +1,20 @@
 import {SETTINGS_CATEGORIES} from "../../common-src/Constants";
 
 export function getSeoConfig(feed) {
-  const webGlobalSettings = feed.settings?.[SETTINGS_CATEGORIES.WEB_GLOBAL_SETTINGS] || {};
+  // Handle case where feed might not be available or have different structure
+  if (!feed) {
+    return {
+      googleAnalyticsId: 'G-ZK833WGLV3',
+      seoSettings: {
+        twitterHandle: '',
+        ogDefaultImage: '',
+      }
+    };
+  }
+  
+  // Check both feed.settings and feed directly for settings
+  const settings = feed.settings || feed;
+  const webGlobalSettings = settings[SETTINGS_CATEGORIES.WEB_GLOBAL_SETTINGS] || {};
   
   return {
     googleAnalyticsId: webGlobalSettings.googleAnalyticsId || 'G-ZK833WGLV3',

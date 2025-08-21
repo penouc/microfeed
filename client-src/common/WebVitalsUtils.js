@@ -1,27 +1,63 @@
 import {trackEvent} from './AnalyticsUtils';
 
-// Web Vitals monitoring
+// Web Vitals monitoring using native Performance API
 export function initWebVitals() {
   if (typeof window === 'undefined') return;
   
-  // Only load Web Vitals library if Analytics is available
+  // Only track if Analytics is available
   if (!window.gtag) return;
   
-  // Dynamically import web-vitals library
-  import('web-vitals').then(({getCLS, getFID, getFCP, getLCP, getTTFB}) => {
-    // Track Core Web Vitals
-    getCLS(sendToGoogleAnalytics);
-    getFID(sendToGoogleAnalytics);
-    getFCP(sendToGoogleAnalytics);
-    getLCP(sendToGoogleAnalytics);
-    getTTFB(sendToGoogleAnalytics);
-  }).catch(() => {
-    // Fallback if web-vitals library is not available
-    console.log('Web Vitals library not available');
-  });
+  // Use Performance Observer for Web Vitals tracking
+  if ('PerformanceObserver' in window) {
+    try {
+      // Track Largest Contentful Paint (LCP)
+      const lcpObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        sendToGoogleAnalytics({
+          name: 'LCP',
+          delta: lastEntry.renderTime || lastEntry.loadTime,
+          id: 'lcp'
+        });
+      });
+      lcpObserver.observe({entryTypes: ['largest-contentful-paint']});
+      
+      // Track First Input Delay (FID)
+      const fidObserver = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          sendToGoogleAnalytics({
+            name: 'FID',
+            delta: entry.processingStart - entry.startTime,
+            id: 'fid'
+          });
+        }
+      });
+      fidObserver.observe({entryTypes: ['first-input']});
+      
+      // Track Cumulative Layout Shift (CLS)
+      let clsValue = 0;
+      const clsObserver = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          if (!entry.hadRecentInput) {
+            clsValue += entry.value;
+          }
+        }
+        sendToGoogleAnalytics({
+          name: 'CLS',
+          delta: clsValue,
+          id: 'cls'
+        });
+      });
+      clsObserver.observe({entryTypes: ['layout-shift']});
+      
+    } catch (e) {
+      // Ignore PerformanceObserver errors
+      console.log('Web Vitals monitoring not supported');
+    }
+  }
 }
 
-function sendToGoogleAnalytics({name, delta, value, id}) {
+function sendToGoogleAnalytics({name, delta, id}) {
   // Track Web Vitals with Google Analytics
   trackEvent('web_vitals', 'performance', name, Math.round(name === 'CLS' ? delta * 1000 : delta));
   
