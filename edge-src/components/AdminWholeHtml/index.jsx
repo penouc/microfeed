@@ -19,6 +19,9 @@ export default class AdminWholeHtml extends React.Component {
         description={description}
         webpackJsList={webpackJsList}
         webpackCssList={webpackCssList}
+        googleAnalyticsId="G-ZK833WGLV3"
+        openGraph={null}
+        twitterCard={null}
         favicon={{
           'apple-touch-icon': '/assets/favicon/apple-touch-icon.png',
           '32x32': '/assets/favicon/favicon-32x32.png',

@@ -17,10 +17,10 @@ async function fetchFeed({request, next, env, data}) {
       'status__!=': STATUSES.DELETED,
     });
   } else if (urlObj.pathname.startsWith(urlJoin(ADMIN_URLS.home(), '/items/'))) {
-    // Either /items/ or /items/{id}
-    if (!urlObj.pathname.startsWith(urlJoin(ADMIN_URLS.home(), '/items/new'))) {
-      return next();
-    }
+    // For /items/new, we don't need to fetch items
+    // For /items/{id}, the individual route handler will fetch the specific item
+    // For /items/list, it's handled above
+    // So we can proceed without fetching items here
   } else if (urlObj.pathname.startsWith(urlJoin(ADMIN_URLS.home(), '/settings/code-editor'))) {
     fetchItems = getFetchItemsParams(request, {
       'status__!=': STATUSES.DELETED,
