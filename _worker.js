@@ -149,7 +149,7 @@ export default {
           const itemIdMatch = normalizedPath.match(/^\/admin\/items\/([^\/]+)$/);
           if (itemIdMatch) {
             const { onRequestGet } = await import('./functions/admin/items/[itemId]/index.jsx');
-            return await onRequestGet({ env, request, data });
+            return await onRequestGet({ params: { itemId: itemIdMatch[1] }, env, request, data });
           }
         }
 
